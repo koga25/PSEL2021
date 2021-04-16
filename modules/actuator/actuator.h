@@ -2,7 +2,7 @@
 #define ACTUATOR_H
 
 #include <modules/module.h>
-#include <protobufs/grSim_Packet.pb.h>
+#include <protobufs/packet.pb.h>
 
 class Actuator : public Module
 {
@@ -23,15 +23,11 @@ public:
     *
     * @param isYellow If the robot that will be commanded is from team yellow
     * @param robotId The id of the robot that the command will be sent
-    * @param vx The velocity in x-axis to send to robot
-    * @param vy The velocity in y-axis to send to robot
-    * @param vw The angular velocity to send to robot
-    * @param enableDribble If the robot needs to enable the dribbling device
-    * @param kickPower The power of the kick that the kick device will make
-    * @param isChip If the kick is parabollic
+    * @param wheelLeft The velocity (in rad/s) of the left wheel
+    * @param wheelRight TThe velocity (in rad/s) of the right wheel
     *
     */
-    void sendCommand(bool isYellow, int robotId, float vx, float vy, float vw, bool enableDribble = false, float kickPower = 0.0f, bool isChip = false);
+    void sendCommand(bool isYellow, int robotId, float wheelLeft, float wheelRight);
 
 private:
     /**

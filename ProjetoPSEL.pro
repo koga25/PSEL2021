@@ -35,16 +35,10 @@ SOURCES += \
         modules/actuator/actuator.cpp \
         modules/module.cpp \
         modules/vision/vision.cpp \
-        protobufs/grSim_Commands.pb.cc \
-        protobufs/grSim_Packet.pb.cc \
-        protobufs/grSim_Replacement.pb.cc \
-        protobufs/ssl_gc_common.pb.cc \
-        protobufs/ssl_gc_geometry.pb.cc \
-        protobufs/ssl_vision_detection.pb.cc \
-        protobufs/ssl_vision_detection_tracked.pb.cc \
-        protobufs/ssl_vision_geometry.pb.cc \
-        protobufs/ssl_vision_wrapper.pb.cc \
-        protobufs/ssl_vision_wrapper_tracked.pb.cc
+        protobufs/command.pb.cc \
+        protobufs/common.pb.cc \
+        protobufs/packet.pb.cc \
+        protobufs/replacement.pb.cc
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -55,14 +49,8 @@ HEADERS += \
     modules/actuator/actuator.h \
     modules/module.h \
     modules/vision/vision.h \
-    protobufs/grSim_Commands.pb.h \
-    protobufs/grSim_Packet.pb.h \
-    protobufs/grSim_Replacement.pb.h \
-    protobufs/ssl_gc_common.pb.h \
-    protobufs/ssl_gc_geometry.pb.h \
-    protobufs/ssl_vision_detection.pb.h \
-    protobufs/ssl_vision_detection_tracked.pb.h \
-    protobufs/ssl_vision_geometry.pb.h \
-    protobufs/ssl_vision_wrapper.pb.h \
-    protobufs/ssl_vision_wrapper_tracked.pb.h
+    protobufs/command.pb.h \
+    protobufs/common.pb.h \
+    protobufs/packet.pb.h \
+    protobufs/replacement.pb.h
 

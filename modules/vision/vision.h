@@ -4,7 +4,7 @@
 #include <QMutex>
 
 #include <modules/module.h>
-#include <protobufs/ssl_vision_wrapper.pb.h>
+#include <protobufs/packet.pb.h>
 
 class Vision : public Module
 {
@@ -34,41 +34,41 @@ public:
     * @param isYellow If the required player is from the yellow team
     * @param playerId The id of the required robot
     *
-    * @return SSL_DetectionRobot An protobuf packet class that contains all
+    * @return fira_message::Robot An protobuf packet class that contains all
     * robot last detection data
     */
-    SSL_DetectionRobot getLastRobotDetection(bool isYellow, int playerId);
+    fira_message::Robot getLastRobotDetection(bool isYellow, int playerId);
 
     /**
     *
     * Take the last ball detection from the vision network
     *
-    * @return SSL_DetectionBall An protobuf packet class that contains all
+    * @return fira_message::Ball An protobuf packet class that contains all
     * ball last detection data
     */
-    SSL_DetectionBall getLastBallDetection();
+    fira_message::Ball getLastBallDetection();
 
     /**
     *
     * Take the last field geometry data from the network
     *
-    * @return SSL_GeometryData An protobuf packet class that contains all
+    * @return fira_message::Field An protobuf packet class that contains all
     * field geometry last detection data
     */
-    SSL_GeometryData getLastGeometryData();
+    fira_message::Field getLastGeometryData();
 
 private:
     // Mutex to avoid problems with threads synchronization
     QMutex _visionMutex;
 
     // QMap to store the robots detections
-    QMap<bool, QMap<int, SSL_DetectionRobot>*> _robotsMap;
+    QMap<bool, QMap<int, fira_message::Robot>*> _robotsMap;
 
     // SSL_DetectionBall object to store the ball detection
-    SSL_DetectionBall _lastBallDetection;
+    fira_message::Ball _lastBallDetection;
 
     // SSL_GeometryData object to sotre the last geometry detection
-    SSL_GeometryData _lastGeometryData;
+    fira_message::Field _lastGeometryData;
 
     /**
     *

@@ -7,7 +7,7 @@
 int main(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
 
-    Vision *vision = new Vision("224.5.23.2", 10002);
+    Vision *vision = new Vision("224.0.0.1", 10002);
     Actuator *actuator = new Actuator("127.0.0.1", 20011);
 
     // Desired frequency
@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 
         // Process vision and actuator commands
         vision->processNetworkDatagrams();
-        actuator->sendCommand(true, 0, 1.0, 0.0, 0.0);
+        actuator->sendCommand(true, 0, 10.0, 10.0);
 
         // TimePoint
         std::chrono::high_resolution_clock::time_point afterProcess = std::chrono::high_resolution_clock::now();
