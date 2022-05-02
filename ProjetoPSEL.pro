@@ -54,6 +54,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     modules/actuator/actuator.h \
     modules/module.h \
+    modules/structs/Text File.h \
+    modules/structs/structs.h \
     modules/vision/vision.h \
     protobufs/grSim_Commands.pb.h \
     protobufs/grSim_Packet.pb.h \

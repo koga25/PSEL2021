@@ -2,6 +2,7 @@
 #define ACTUATOR_H
 
 #include <modules/module.h>
+#include "modules/structs/structs.h"
 #include <protobufs/grSim_Packet.pb.h>
 
 class Actuator : public Module
@@ -32,7 +33,7 @@ public:
     *
     */
     void sendCommand(bool isYellow, int robotId, float vx, float vy, float vw, bool enableDribble = false, float kickPower = 0.0f, bool isChip = false);
-
+    void runToBall(bool isYellow, float orientation, int robotId, struct Position* ball, struct Position* robot, float angle);
 private:
     /**
     *

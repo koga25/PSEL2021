@@ -20,11 +20,13 @@ void Actuator::sendCommand(bool isYellow, int robotId, float vx, float vy, float
     // Set robot id
     command->set_id(robotId);
 
+
     // Set velocity
     command->set_wheelsspeed(false);
     command->set_veltangent(vx);
     command->set_velnormal(vy);
     command->set_velangular(vw);
+
 
     // Set kick speed
     if(isChip) {
@@ -46,6 +48,20 @@ void Actuator::sendCommand(bool isYellow, int robotId, float vx, float vy, float
     // Write buffer in network
     networkSocket()->write(buffer.c_str(), buffer.length());
 }
+
+void Actuator::runToBall(bool isYellow, float orientation, int robotId, struct Position* ball, struct Position* robot, float angle) {
+    std::cout << "robot orientation: " << orientation << "   angle: " << angle << std::endl;
+    //if(ball->x > )
+    angle = angle - orientation;
+    float vx = 1;
+    float differenceInOrientation = abs(orientation - (angle + orientation));
+    if(differenceInOrientation < 0.15) {
+        angle = 0;
+    }
+    sendCommand(isYellow, robotId, 1, 0.0, angle*5, true, 5.0);
+}
+
+
 
 void Actuator::connectToNetwork() {
     // Connect to simulator (host)
