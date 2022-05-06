@@ -49,19 +49,22 @@ void Actuator::sendCommand(bool isYellow, int robotId, float vx, float vy, float
     networkSocket()->write(buffer.c_str(), buffer.length());
 }
 
-void Actuator::runToBall(bool isYellow, float orientation, int robotId, struct Position* ball, struct Position* robot, float angle) {
-    std::cout << "robot orientation: " << orientation << "   angle: " << angle << std::endl;
-    //if(ball->x > )
-    angle = angle - orientation;
-    float vx = 1;
-    float differenceInOrientation = abs(orientation - (angle + orientation));
-    if(differenceInOrientation < 0.15) {
-        angle = 0;
-    }
-    sendCommand(isYellow, robotId, 1, 0.0, angle*5, true, 5.0);
+void Actuator::walkAroundPosition() {
+    sendCommand(false, 0, 1.0, 0.0, 1.0);
 }
 
+void Actuator::runToBall(bool isYellow, float orientation, int robotId, struct Position* ball, struct Position* robot, float angle) {
+    angle = angle - orientation;
+    angle = customMod((angle + M_PI_2), M_PI) - M_PI_2;
+    float vx = 1;
+    float vw = 0;
+    sendCommand(isYellow, robotId, 1.0, 0.0, angle*5, true, 5.0);
+}
 
+//a%b
+float Actuator::customMod(float a, float b) {
+    return a - floor(a/b) * b;
+}
 
 void Actuator::connectToNetwork() {
     // Connect to simulator (host)

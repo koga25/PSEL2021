@@ -34,6 +34,7 @@ public:
     */
     void sendCommand(bool isYellow, int robotId, float vx, float vy, float vw, bool enableDribble = false, float kickPower = 0.0f, bool isChip = false);
     void runToBall(bool isYellow, float orientation, int robotId, struct Position* ball, struct Position* robot, float angle);
+    void walkAroundPosition();
 private:
     /**
     *
@@ -41,6 +42,7 @@ private:
     * This method connets to the simulator network
     *
     */
+    float customMod(float a, float b);
     void connectToNetwork();
 };
 

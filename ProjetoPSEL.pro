@@ -33,6 +33,7 @@ system(echo "Compiling protobuf files" && cd protobufs/proto && protoc --cpp_out
 SOURCES += \
         main.cpp \
         modules/actuator/actuator.cpp \
+        modules/math/fastMath.cpp \
         modules/module.cpp \
         modules/vision/vision.cpp \
         protobufs/grSim_Commands.pb.cc \
@@ -53,6 +54,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 HEADERS += \
     modules/actuator/actuator.h \
+    modules/math/fastMath.h \
     modules/module.h \
     modules/structs/Text File.h \
     modules/structs/structs.h \
