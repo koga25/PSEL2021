@@ -28,6 +28,7 @@ public:
     *
     */
     void sendCommand(bool isYellow, int robotId, float wheelLeft, float wheelRight);
+    void circleTheBall(bool isYellow, int robotID, double distanceBetween, double orientation, double angle, double radius, bool* circleOrientation);
 
 private:
     /**
@@ -36,6 +37,8 @@ private:
     * This method connets to the simulator network
     *
     */
+    double angleWrap(double a, double b);
+    bool checkIfAngleIsWithin(double a, double b, double within);
     void connectToNetwork();
 };
 
