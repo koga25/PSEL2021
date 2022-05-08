@@ -3,6 +3,8 @@
 
 #include <modules/module.h>
 #include <protobufs/packet.pb.h>
+#include <modules/structs/structs.h>
+#include <modules/math/fastMath.h>
 
 class Actuator : public Module
 {
@@ -29,7 +31,7 @@ public:
     */
     void sendCommand(bool isYellow, int robotId, float wheelLeft, float wheelRight);
     void circleTheBall(bool isYellow, int robotID, double distanceBetween, double orientation, double angle, double radius, bool* circleOrientation);
-
+    void makeGoal(bool isYellow, int robotID, double orientation, double angle, bool *fixPosition, Position robotPosition, Position ballPosition);
 private:
     /**
     *

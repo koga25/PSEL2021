@@ -54,6 +54,7 @@ int main(int argc, char *argv[]) {
     int desiredFrequency = 60;
     //flag for knowing if it should begin circling around or not.
     bool circleOrientation = false;
+    bool fixPosition = true;
     while(true) {
         // TimePoint
         std::chrono::high_resolution_clock::time_point beforeProcess = std::chrono::high_resolution_clock::now();
@@ -65,11 +66,14 @@ int main(int argc, char *argv[]) {
         struct Position ballPosition = { ball.x(), ball.y() };
         fira_message::Robot robot = vision->getLastRobotDetection(true, 1);
 
+
         struct Position robotPosition = { robot.x(), robot.y() };
         double distance = calculateDistanceBetweenPoints(ballPosition.y - robotPosition.y, ballPosition.x - robotPosition.x);
         double angle = fastAtan2(ballPosition.y - robotPosition.y, ballPosition.x - robotPosition.x);
-        actuator->circleTheBall(true, 1, distance, robot.orientation(), angle, 0.2, &circleOrientation);
-        //actuator->runToBall(false, robot.orientation(), 2, &ballPosition, &robotPosition, angle);
+        //actuator->circleTheBall(true, 1, distance, robot.orientation(), angle, 0.2, &circleOrientation);
+
+        actuator->makeGoal(true, 1, robot.orientation(), angle, &fixPosition, robotPosition, ballPosition);
+
 
         // TimePoint
         std::chrono::high_resolution_clock::time_point afterProcess = std::chrono::high_resolution_clock::now();

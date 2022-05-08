@@ -40,8 +40,8 @@ void Actuator::circleTheBall(bool isYellow, int robotID, double distanceBetween,
     } else {
         angle = angle + M_PI_2;
         angle = angleWrap((angle + M_PI_2), M_PI) - M_PI_2;
-        if(!(*circleOrientation) && !checkIfAngleIsWithin(angle, orientation, 0.05)) {
-            sendCommand(isYellow, robotID, 1, -1);
+        if(!(*circleOrientation) && !checkIfAngleIsWithin(angle, orientation, 0.01)) {
+            sendCommand(isYellow, robotID, 3, -3);
         } else {
             *circleOrientation = true;
             angle = orientation;
@@ -54,7 +54,7 @@ void Actuator::circleTheBall(bool isYellow, int robotID, double distanceBetween,
             //ω (R − l/2) = Vl
             float vr = 1*(radius + 0.042);
             float vl = 1*(radius - 0.042);
-            sendCommand(isYellow, robotID, vl*20, vr*20);
+            sendCommand(isYellow, robotID, vl*40, vr*40);
         }
     }
 
@@ -71,6 +71,52 @@ bool Actuator::checkIfAngleIsWithin(double a, double b, double within) {
     if(fabs(diff) <= within || PI_TIMES_2-fabs(diff) <= within) return true;
 
     return false;
+}
+
+void Actuator::makeGoal(bool isYellow, int robotID, double orientation, double angle, bool *fixPosition, Position robotPosition, Position ballPosition) {
+    //goal is: x = 0.75; y = 0.0
+
+
+    angle = angle - orientation;
+    angle = fastAtan2(sin(angle), cos(angle));
+    std::cout << *fixPosition << std::endl;
+    //sendCommand(isYellow, robotID, 10*(cos(angle) + sin(angle)), 10*(cos(angle) - sin(angle)));
+
+    if((robotPosition.x > (ballPosition.x - 0.15)) && *fixPosition) {
+        double fixAngle = 0;
+        if(robotPosition.x <= ballPosition.x - 0.1) {
+            fixAngle = fastAtan2(ballPosition.y - robotPosition.y, ballPosition.x - 0.15 - robotPosition.x);
+        } else {
+            if(ballPosition.y - robotPosition.y > 0) {
+                fixAngle = fastAtan2(ballPosition.y - 0.1 - robotPosition.y, ballPosition.x - 0.15 - robotPosition.x);
+            } else {
+                fixAngle = fastAtan2(ballPosition.y + 0.1 - robotPosition.y, ballPosition.x - 0.15 - robotPosition.x);
+            }
+        }
+
+        fixAngle = fixAngle - orientation;
+        fixAngle = fastAtan2(sin(fixAngle), cos(fixAngle));
+        sendCommand(isYellow, robotID, 10*(cos(fixAngle) + sin(fixAngle)), 10*(cos(fixAngle) - sin(fixAngle)));
+    } else {
+        std::cout << "hello" << std::endl;
+        *fixPosition = false;
+        if(calculateDistanceBetweenPoints(ballPosition.y - robotPosition.y, ballPosition.x - robotPosition.x) > 0.1) {
+            sendCommand(isYellow, robotID, 10*(cos(angle) + sin(angle)), 10*(cos(angle) - sin(angle)));
+        } else {
+            double ballToGoalAngle  = fastAtan2(0 - ballPosition.y, 0.75 - ballPosition.x);
+            ballToGoalAngle = ballToGoalAngle - orientation;
+            ballToGoalAngle = fastAtan2(sin(ballToGoalAngle), cos(ballToGoalAngle));
+            sendCommand(isYellow, robotID, 10*(cos(ballToGoalAngle) + sin(ballToGoalAngle)), 10*(cos(ballToGoalAngle) - sin(ballToGoalAngle)));
+            std::cout << "angle is: " << ballToGoalAngle << "    robotPosition = x: " <<robotPosition.x << " y: " <<robotPosition.y << "     ballPosition = x: " << ballPosition.x << " y: " << ballPosition.y << std::endl;
+        }
+
+        if(robotPosition.x > ballPosition.x + 0.1) {
+            std::cout << "entrou" << std::endl;
+            *fixPosition = true;
+        }
+    }
+
+
 }
 
 void Actuator::connectToNetwork() {
