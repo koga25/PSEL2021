@@ -70,9 +70,9 @@ int main(int argc, char *argv[]) {
         struct Position robotPosition = { robot.x(), robot.y() };
         double distance = calculateDistanceBetweenPoints(ballPosition.y - robotPosition.y, ballPosition.x - robotPosition.x);
         double angle = fastAtan2(ballPosition.y - robotPosition.y, ballPosition.x - robotPosition.x);
-        //actuator->circleTheBall(true, 1, distance, robot.orientation(), angle, 0.2, &circleOrientation);
+        actuator->circleTheBall(true, 1, distance, robot.orientation(), angle, 0.3, &circleOrientation);
 
-        actuator->makeGoal(true, 1, robot.orientation(), angle, &fixPosition, robotPosition, ballPosition);
+        //actuator->makeGoal(true, 1, robot.orientation(), angle, &fixPosition, robotPosition, ballPosition);
 
 
         // TimePoint

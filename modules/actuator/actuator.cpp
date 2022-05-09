@@ -39,9 +39,10 @@ void Actuator::circleTheBall(bool isYellow, int robotID, double distanceBetween,
         sendCommand(isYellow, robotID, 10*cos(angle), 10*sin(angle));
     } else {
         angle = angle + M_PI_2;
-        angle = angleWrap((angle + M_PI_2), M_PI) - M_PI_2;
-        if(!(*circleOrientation) && !checkIfAngleIsWithin(angle, orientation, 0.01)) {
-            sendCommand(isYellow, robotID, 3, -3);
+        angle = fastAtan2(sin(angle), cos(angle));
+        //angle = angleWrap((angle + M_PI_2), M_PI) - M_PI_2;
+        if(!(*circleOrientation) && !checkIfAngleIsWithin(angle, orientation, 0.005)) {
+            sendCommand(isYellow, robotID, 1, -1);
         } else {
             *circleOrientation = true;
             angle = orientation;
