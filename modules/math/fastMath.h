@@ -10,6 +10,8 @@ float normalAtan2(struct Position robot, struct Position ball);
 
 float fastAtan2(float y, float x);
 
-inline float calculateDistanceBetweenPoints(float a, float b);
+float calculateDistanceBetweenPoints(float a, float b);
+
+bool sameSign(float a, float b);
 
 #endif // FASTMATH_H

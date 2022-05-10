@@ -6,6 +6,7 @@
 #include <modules/actuator/actuator.h>
 #include <modules/vision/vision.h>
 #include <modules/math/fastMath.h>
+#include <modules/RobotLogic/robotLogic.h>
 
 
 
@@ -45,26 +46,24 @@
 int main(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
 
-    Vision *vision = new Vision("224.5.23.2", 10020);
+    Vision *vision = new Vision("224.0.0.1", 10002);
     Actuator *actuator = new Actuator("127.0.0.1", 20011);
+
+    //initializing Class that we will use to program the logic of the robots and send to the Actuator.
+    RobotLogic *robotLogic = new RobotLogic(actuator, vision);
+
     // Desired frequency
     int desiredFrequency = 60;
-
+    bool circleAround = false;
     while(true) {
         std::chrono::high_resolution_clock::time_point beforeProcess = std::chrono::high_resolution_clock::now();
 
         // Process vision and actuator commands
         vision->processNetworkDatagrams();
 
-        actuator->walkAroundPosition();
 
-        SSL_DetectionBall ball = vision->getLastBallDetection();
-        struct Position ballPosition = { ball.x(), ball.y()};
-        SSL_DetectionRobot robot = vision->getLastRobotDetection(false, 2);
-
-        struct Position robotPosition = {robot.x(), robot.y()};
-        float angle = fastAtan2(ballPosition.y - robotPosition.y, ballPosition.x - robotPosition.x);
-        actuator->runToBall(false, robot.orientation(), 2, &ballPosition, &robotPosition, angle);
+        //robotLogic->runToBall(false, 2);
+        robotLogic->walkAroundPosition(false, 0, &circleAround);
 
         // TimePoint
         std::chrono::high_resolution_clock::time_point afterProcess = std::chrono::high_resolution_clock::now();

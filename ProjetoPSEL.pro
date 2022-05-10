@@ -32,6 +32,7 @@ system(echo "Compiling protobuf files" && cd protobufs/proto && protoc --cpp_out
 
 SOURCES += \
         main.cpp \
+        modules/RobotLogic/robotLogic.cpp \
         modules/actuator/actuator.cpp \
         modules/math/fastMath.cpp \
         modules/module.cpp \
@@ -53,6 +54,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    modules/RobotLogic/robotLogic.h \
     modules/actuator/actuator.h \
     modules/math/fastMath.h \
     modules/module.h \

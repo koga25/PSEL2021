@@ -39,6 +39,10 @@ float fastAtan2(float y, float x)
   return t3;
 }
 
-inline float calculateDistanceBetweenPoints(float a, float b) {
-    sqrt(pow(a, 2) + pow(b, 2));
+float calculateDistanceBetweenPoints(float a, float b) {
+    return sqrt(pow(a, 2) + pow(b, 2));
+}
+
+bool sameSign(float a, float b) {
+    return a*b >= 0.0f;
 }
