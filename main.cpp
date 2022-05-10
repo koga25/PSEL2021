@@ -5,6 +5,7 @@
 #include <modules/vision/vision.h>
 #include <modules/math/fastMath.h>
 #include <modules/structs/structs.h>
+#include <modules/RobotLogic/robotLogic.h>
 
 
 
@@ -49,11 +50,12 @@ int main(int argc, char *argv[]) {
 
     Vision *vision = new Vision("224.0.0.1", 10002);
     Actuator *actuator = new Actuator("127.0.0.1", 20011);
+    RobotLogic *robotLogic = new RobotLogic(actuator, vision);
 
     // Desired frequency
     int desiredFrequency = 60;
     //flag for knowing if it should begin circling around or not.
-    bool circleOrientation = false;
+    bool circleAround = false;
     bool fixPosition = true;
     while(true) {
         // TimePoint
@@ -62,17 +64,8 @@ int main(int argc, char *argv[]) {
         // Process vision and actuator commands
         vision->processNetworkDatagrams();
 
-        fira_message::Ball ball = vision->getLastBallDetection();
-        struct Position ballPosition = { ball.x(), ball.y() };
-        fira_message::Robot robot = vision->getLastRobotDetection(true, 1);
-
-
-        struct Position robotPosition = { robot.x(), robot.y() };
-        double distance = calculateDistanceBetweenPoints(ballPosition.y - robotPosition.y, ballPosition.x - robotPosition.x);
-        double angle = fastAtan2(ballPosition.y - robotPosition.y, ballPosition.x - robotPosition.x);
-        actuator->circleTheBall(true, 1, distance, robot.orientation(), angle, 0.3, &circleOrientation);
-
-        //actuator->makeGoal(true, 1, robot.orientation(), angle, &fixPosition, robotPosition, ballPosition);
+        robotLogic->walkAroundRadius(true, 1, 0.2, &circleAround);
+        //robotLogic->makeGoal(true, 1, &fixPosition);
 
 
         // TimePoint

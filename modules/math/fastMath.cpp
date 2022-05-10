@@ -1,4 +1,5 @@
 #include "fastMath.h"
+#include <algorithm>
 
 //if you want to benchmark the two functions, and compare the outputs from them, remove the comments, in my pc it is 3 times faster.
 double normalAtan2(struct Position robot, struct Position ball) {
@@ -38,6 +39,10 @@ double fastAtan2(double y, double x)
   return t3;
 }
 
-double calculateDistanceBetweenPoints(double y, double x) {
-    return sqrt(pow(y, 2) + pow(x, 2));
+double calculateDistanceBetweenPoints(double a, double b) {
+    return sqrt(pow(a, 2) + pow(b, 2));
+}
+
+bool sameSign(double a, double b) {
+    return a*b >= 0.0f;
 }
