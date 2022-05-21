@@ -17,16 +17,20 @@ public:
 
     RobotLogic(Actuator *actuator, Vision *vision);
 
-    void runToBall(bool isYellow, int robotId);
+    void runToBall(bool isYellow, int robotId, float kickPower);
     void walkAroundPosition(bool isYellow, int robotId, bool *circleAround);
+    void dribble(bool isYellow, int robotId, bool isWithBall);
 
 private:
     Actuator *actuator;
     Vision *vision;
-    bool checkIfAngleIsWithin(double a, double b, double within);
+    bool checkIfAngleIsWithin(float a, float b, float within);
     float getDistanceToTarget(float a, float b);
     void getBallAndRobotPosition(bool isYellow, int robotID);
+    float getAngleOfTargetPosition(struct Position targetPosition);
     float getAngleOfTargetPosition();
+    //Position getSpecificRobotPosition();
+    Closest getClosestObstacle(bool comparingRobotColor, int comparingRobotId);
 };
 
 

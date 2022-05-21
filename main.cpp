@@ -62,8 +62,9 @@ int main(int argc, char *argv[]) {
         vision->processNetworkDatagrams();
 
 
-        //robotLogic->runToBall(false, 2);
-        robotLogic->walkAroundPosition(false, 0, &circleAround);
+        //robotLogic->runToBall(false, 2, 5.0);
+        //robotLogic->walkAroundPosition(false, 0, &circleAround);
+        robotLogic->dribble(false, 0, true);
 
         // TimePoint
         std::chrono::high_resolution_clock::time_point afterProcess = std::chrono::high_resolution_clock::now();

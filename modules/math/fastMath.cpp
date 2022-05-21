@@ -1,17 +1,22 @@
 #include "fastMath.h"
 #include <algorithm>
 
-//if you want to benchmark the two functions, and compare the outputs from them, remove the comments, in my pc it is 3 times faster.
 float normalAtan2(struct Position robot, struct Position ball) {
     float angle = atan2(ball.y - robot.y, ball.x - robot.x);
-    //const float angle = acos(((robot.x*ball.x) + (robot.y * ball.y))/(sqrt((robot.x * robot.x) + (robot.y * robot.y)) * sqrt((ball.x * ball.x) + (ball.y * ball.y))));
-    //std::cout << angle << std::endl;
     return angle;
 }
 
+/*
+fastCalculate: fastAtan2
+calculate mean: normalAtan2
+
+Test in -O2, 100000000 iterations:
+    fastCalculate mean is: 40
+    calculate mean is: 59
+*/
 float fastAtan2(float y, float x)
 {
-  float t0, t1, t2, t3, t4;
+  float t0, t1, t3, t4;
   t3 = std::abs(x);
   t1 = std::abs(y);
   t0 = std::max(t3, t1);
@@ -35,13 +40,29 @@ float fastAtan2(float y, float x)
   if(std::isnan(t3)) {
       t3 = 0;
   }
-  //std::cout << t3 << std::endl;
   return t3;
 }
 
+
+
+/*
+fastCalculate: this function
+calculate mean: sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2))
+hypotf32: hypotf32(x2 - x1, y2 - y1)
+
+Test in -O2, 100000000 iterations:
+    fastCalculate mean is: 26 nanoseconds
+    calculate mean is: 32 nanoseconds
+    hypotf32 mean is: 31 nanoseconds
+*/
 float calculateDistanceBetweenPoints(float a, float b) {
-    return sqrt(pow(a, 2) + pow(b, 2));
+    const float squareX = a*a;
+    const float squareY = b*b;
+    float sum = squareX + squareY;
+    return sqrt(sum);
 }
+
+
 
 bool sameSign(float a, float b) {
     return a*b >= 0.0f;
