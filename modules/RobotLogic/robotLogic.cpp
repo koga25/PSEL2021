@@ -10,14 +10,23 @@ double RobotLogic::getDistanceToTarget(double a, double b) {
 }
 
 void RobotLogic::getBallAndRobotPosition(bool isYellow, int robotID) {
+
+    getBallPosition();
+    getRobotPosition(isYellow, robotID);
+}
+
+void RobotLogic::getBallPosition() {
     ball = vision->getLastBallDetection();
     ballPosition = { ball.x(), ball.y() };
+}
+
+void RobotLogic::getRobotPosition(bool isYellow, int robotID) {
     robot = vision->getLastRobotDetection(isYellow, robotID);
     robotPosition = { robot.x(), robot.y() };
 }
 
-double RobotLogic::getAngleOfTargetPosition() {
-    return fastAtan2(ballPosition.y - robotPosition.y, ballPosition.x - robotPosition.x);
+double RobotLogic::getAngleOfTargetPosition(struct Position initial, struct Position final) {
+    return fastAtan2(final.y - initial.y, final.x - initial.x);
 }
 
 bool RobotLogic::checkIfAngleIsWithin(double a, double b, double within) {
@@ -32,7 +41,7 @@ bool RobotLogic::checkIfAngleIsWithin(double a, double b, double within) {
 //Atividade 2. a)
 void RobotLogic::walkAroundRadius(bool isYellow, int robotID, double radius, bool *circleAround) {
     getBallAndRobotPosition(isYellow, robotID);
-    double angle = getAngleOfTargetPosition();
+    double angle = getAngleOfTargetPosition(robotPosition, ballPosition);
     const double orientation = robot.orientation();
     double distance = getDistanceToTarget(ballPosition.y - robotPosition.y, ballPosition.x - robotPosition.x);
 
@@ -41,7 +50,7 @@ void RobotLogic::walkAroundRadius(bool isYellow, int robotID, double radius, boo
         *circleAround = false;
         angle = angle - orientation;
         angle = fastAtan2(sin(angle), cos(angle));
-        actuator->sendCommand(isYellow, robotID, 10*(cos(angle) + sin(angle)), 10*(cos(angle) - sin(angle)));
+        actuator->sendCommand(isYellow, robotID, 10*leftWheelVelocity(angle), 10*rightWheelVelocity(angle));
     } else {
         angle = angle - M_PI_2;
         angle = fastAtan2(sin(angle), cos(angle));
@@ -89,7 +98,7 @@ void RobotLogic::makeGoal(bool isYellow, int robotID, bool *fixPosition) {
         }
         fixAngle = fixAngle - orientation;
         fixAngle = fastAtan2(sin(fixAngle), cos(fixAngle));
-        actuator->sendCommand(isYellow, robotID, 10*(cos(fixAngle) + sin(fixAngle)), 10*(cos(fixAngle) - sin(fixAngle)));
+        actuator->sendCommand(isYellow, robotID, 10*leftWheelVelocity(fixAngle), 10*rightWheelVelocity(fixAngle));
     } else {
         *fixPosition = false;
         //if robot is in front of the ball and his position.y is highly below or highly over ballPosition.y, try to fix it making the robot go upwards.
@@ -98,26 +107,82 @@ void RobotLogic::makeGoal(bool isYellow, int robotID, bool *fixPosition) {
             double angle = fastAtan2(ballPosition.y - robotPosition.y, ballPosition.x - 0.15 - robotPosition.x);
             angle = angle - orientation;
             angle = fastAtan2(sin(angle), cos(angle));
-            actuator->sendCommand(isYellow, robotID, 10*(cos(angle) + sin(angle)), 10*(cos(angle) - sin(angle)));
+            actuator->sendCommand(isYellow, robotID, 10*leftWheelVelocity(angle), 10*rightWheelVelocity(angle));
         } else {
             //if distance from ball is > 0.1, go towards the ball, else change the angle from robot -> ball to ball -> goal.
             if(distance > 0.1) {
 
-                double angle = getAngleOfTargetPosition();
+                double angle = getAngleOfTargetPosition(robotPosition, ballPosition);
                 angle = angle - orientation;
                 angle = fastAtan2(sin(angle), cos(angle));
-                actuator->sendCommand(isYellow, robotID, 10*(cos(angle) + sin(angle)), 10*(cos(angle) - sin(angle)));
+                actuator->sendCommand(isYellow, robotID, 10*leftWheelVelocity(angle), 10*rightWheelVelocity(angle));
             } else {
                 double ballToGoalAngle  = fastAtan2(0 - ballPosition.y, 0.75 - ballPosition.x);
                 ballToGoalAngle = ballToGoalAngle - orientation;
                 ballToGoalAngle = fastAtan2(sin(ballToGoalAngle), cos(ballToGoalAngle));
-                actuator->sendCommand(isYellow, robotID, 10*(cos(ballToGoalAngle) + sin(ballToGoalAngle)), 10*(cos(ballToGoalAngle) - sin(ballToGoalAngle)));
+                actuator->sendCommand(isYellow, robotID, 10*leftWheelVelocity(ballToGoalAngle), 10*rightWheelVelocity(ballToGoalAngle));
             }
             if(robotPosition.x > ballPosition.x + 0.1) {
                 *fixPosition = true;
             }
         }
+    }
+}
 
+struct BallData RobotLogic::ballVelocityAndDirection() {
+    fira_message::Ball tempBall = vision->getLastBallDetection();
+    struct BallData ballData = {0, 0, false, false};
+    if(tempBall.x() < ball.x()) {
+        ballData.isKick = true;
+        double xFinal = tempBall.x();
+        double xInitial = ball.x();
+        double yFinal = tempBall.y();
+        double yInitial = ball.y();
+
+        static const double timeElapsed = 1000/60;
+
+        ballData.xVelocity = (xFinal - xInitial)/timeElapsed;
+        ballData.yVelocity = (yFinal - yInitial)/timeElapsed;
+    }
+    ball = tempBall;
+    return ballData;
+}
+
+bool RobotLogic::checkIfNumberIsWithin(double input1, double input2, double deviation)
+{
+  return fabs(input1 - input2) <= deviation;
+}
+
+//atividade 4. a)
+void RobotLogic::predictKick(bool isYellow, int robotID) {
+    struct BallData ballData = ballVelocityAndDirection();
+    getBallAndRobotPosition(isYellow, robotID);
+
+    if(ballData.isKick) {
+        static const double xLimit = -0.680;
+        //(S-S0)/V0 = t
+        double timeToLimit = ((xLimit - ball.x())/ballData.xVelocity);
+        //S = S0 + V0*t
+        double yFinalPosition = ballPosition.y + ballData.yVelocity*timeToLimit;
+        if(yFinalPosition > 0.225 || yFinalPosition < -0.225) return;
+
+        struct Position finalPosition = {xLimit, yFinalPosition};
+        bool xIsWithin = checkIfNumberIsWithin(robotPosition.x, xLimit, 0.04);
+        bool yIsWithin = checkIfNumberIsWithin(robotPosition.y, yFinalPosition, 0.04);
+
+        if(!(xIsWithin && yIsWithin)) {
+            double angle = getAngleOfTargetPosition(robotPosition, finalPosition);
+            angle = angle - robot.orientation();
+            angle = fastAtan2(sin(angle), cos(angle));
+
+            actuator->sendCommand(isYellow, robotID, 10*leftWheelVelocity(angle), 10*rightWheelVelocity(angle));
+
+
+            std::cout << angle << "        ROBOT ORIENTATION: " << robot.orientation()<<"       " <<  std::endl;
+        } else {
+            std::cout << "robot vx: " << robot.vx() << "       robot vy: " << robot.vy() << std::endl;
+            actuator->sendCommand(isYellow, robotID, 0, 0);
+        }
     }
 }
 

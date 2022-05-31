@@ -41,7 +41,7 @@
                              -𝝿/2
 
 
-robot length ≃ 0.7f
+robot length ≃ 0.08f
 wheel radius ≃ 0.05f
 */
 
@@ -64,9 +64,9 @@ int main(int argc, char *argv[]) {
         // Process vision and actuator commands
         vision->processNetworkDatagrams();
 
-        robotLogic->walkAroundRadius(true, 1, 0.2, &circleAround);
+        //robotLogic->walkAroundRadius(true, 1, 0.2, &circleAround);
         //robotLogic->makeGoal(true, 1, &fixPosition);
-
+        robotLogic->predictKick(true, 2);
 
         // TimePoint
         std::chrono::high_resolution_clock::time_point afterProcess = std::chrono::high_resolution_clock::now();
