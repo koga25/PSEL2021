@@ -175,7 +175,7 @@ void RobotLogic::predictKick(bool isYellow, int robotID) {
             angle = angle - robot.orientation();
             angle = fastAtan2(sin(angle), cos(angle));
 
-            actuator->sendCommand(isYellow, robotID, 10*leftWheelVelocity(angle), 10*rightWheelVelocity(angle));
+            actuator->sendCommand(isYellow, robotID, 25*leftWheelVelocity(angle), 25*rightWheelVelocity(angle));
 
 
             std::cout << angle << "        ROBOT ORIENTATION: " << robot.orientation()<<"       " <<  std::endl;
